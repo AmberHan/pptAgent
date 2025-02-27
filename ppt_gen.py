@@ -6,7 +6,7 @@ from pptx import Presentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.enum.text import PP_ALIGN
 
-from test_data import ppt_json1
+from test_data import ppt_json
 
 
 def load_presentation(ppt_path):
@@ -403,4 +403,5 @@ if __name__ == '__main__':
 
     ppt_file = select_random_ppt("./ppt_templates")
     # ppt_file = "./ppt_templates/1816068952535851008.pptx"
-    generate(ppt_file, ppt_json1)
+
+    generate(ppt_file, ppt_json)

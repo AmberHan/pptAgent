@@ -13,7 +13,6 @@ from langchain_openai import ChatOpenAI
 import config
 from ppt_gen import generate
 from prompts import gen_ppt_md, gen_md_json
-from test_data import markdown_content
 
 if config.LOCAL:
     llm = ChatOllama(
@@ -80,5 +79,6 @@ def generate_ppt_impl(
 if __name__ == '__main__':
     prompt = gen_ppt_md("人工智能")
     md = ask_query(prompt, "关于大模型")
+    # from test_data import markdown_content
     # md = markdown_content
     generate_ppt_impl(md, "./ppt_templates/test.pptx")

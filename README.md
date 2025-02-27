@@ -17,6 +17,6 @@
 ### 1、修改config.py
 
 - LOCAL表示是否使用本地模型，True表示使用本地的, 设置False需要APIKEY
-- 修改SERVER_PORT，改为server映射端口，（与nginx配置的代理端口需一致）。
+- MODEL表示llm的模型,BASEURL设置代理商的链接；选择本地模型的话, BASEURL = "http://127.0.0.1:11434"
 
 ### 2. 执行 ```pip install -r requirements.txt```后，运行main.py

@@ -6,7 +6,7 @@ from fastapi import (
     APIRouter
 )
 
-from ppt_gen import parse_pdf_impl, parse_topic_impl, generate_ppt_impl
+from ppt_llm import parse_pdf_impl, parse_topic_impl, generate_ppt_impl
 
 app = FastAPI()
 pptHandler = APIRouter(prefix="/ppt")

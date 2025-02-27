@@ -6,7 +6,7 @@ from pptx import Presentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.enum.text import PP_ALIGN
 
-from test_data import ppt_json
+from test_data import ppt_json1
 
 
 def load_presentation(ppt_path):
@@ -376,6 +376,19 @@ def select_random_ppt(directory):
     return os.path.join(directory, selected_file)
 
 
+def generate(ppt_file, md_json):
+    ppt = load_presentation(ppt_file)
+    slides_count = len(ppt.slides)
+    order_list = [0, 1]
+
+    slides_dic = get_slides_dic(ppt)
+    update_all(ppt, order_list, slides_dic, md_json)
+
+    order_list.append(slides_count - 1)
+    resort_slide(ppt, order_list)
+    ppt.save('./runs/final.pptx')
+
+
 def test():
     ppt = load_presentation("./ppt_templates/test.pptx")
     page = 11
@@ -390,13 +403,4 @@ if __name__ == '__main__':
 
     ppt_file = select_random_ppt("./ppt_templates")
     # ppt_file = "./ppt_templates/1816068952535851008.pptx"
-    ppt = load_presentation(ppt_file)
-    slides_count = len(ppt.slides)
-    order_list = [0, 1]
-
-    slides_dic = get_slides_dic(ppt)
-    update_all(ppt, order_list, slides_dic, ppt_json)
-
-    order_list.append(slides_count - 1)
-    resort_slide(ppt, order_list)
-    ppt.save('./final.pptx')
+    generate(ppt_file, ppt_json1)

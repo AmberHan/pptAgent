@@ -78,7 +78,7 @@ def generate_ppt_impl(
 
 
 if __name__ == '__main__':
-    # prompt = gen_ppt_md("人工智能")
-    # md = ask_query(prompt, "关于大模型")
-    md = markdown_content
-    parse_md_impl(md, "./ppt_templates/test.pptx")
+    prompt = gen_ppt_md("人工智能")
+    md = ask_query(prompt, "关于大模型")
+    # md = markdown_content
+    generate_ppt_impl(md, "./ppt_templates/test.pptx")

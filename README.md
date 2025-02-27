@@ -4,10 +4,10 @@
 
 - config.py 配置文件
 - router.py 路由设置
-- ppt.py ppt 生成ppt核心代码
-- prompts.py ppt 生成提示词代码
+- ppt_gen.py ppt 生成ppt核心代码
+- prompts.py ppt 提示词存放位置
 - test_data.py ppt 存放部分测试数据
-- pptgen.py 生成markdown文案
+- ppt_llm.py 生成markdown文案以及json转换
 - ppt_templates ppt模板存放位置
 - runs 程序运行保存文件位置
 - main.py 主函数

@@ -11,7 +11,7 @@ from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 
 import config
-from ppt import generate
+from ppt_llm import generate
 from prompts import gen_ppt_md, gen_md_json
 from test_data import markdown_content
 

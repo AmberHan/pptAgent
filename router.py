@@ -6,9 +6,37 @@ from fastapi import (
     APIRouter
 )
 
+from config import SERVER_IP
 from ppt_llm import parse_pdf_impl, parse_topic_impl, generate_ppt_impl
+from fastapi.staticfiles import StaticFiles
+import os
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+from transfer_ppt.generate_content_from import get_content_value
+from transfer_ppt.generate_ppt import exec_start
+from transfer_ppt.llm2 import MarkdownToJsonConverter
+from transfer_ppt.ppt import ppt_run
+from utils.generate_images import convert_ppt_to_images
+
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+class RequestData(BaseModel):
+    file: str
+    content: str
+
+app.mount("/static", StaticFiles(directory="./"), name="static")
+
+file_name_use = ""
 pptHandler = APIRouter(prefix="/ppt")
 app.include_router(pptHandler)
 
@@ -39,3 +67,58 @@ async def generate_ppt_task(
         ppt_path: str = Form(None)
 ):
     return generate_ppt_impl(md, ppt_path)
+
+
+@app.get("/api/get_content")
+def get_content(name:str, count:str):
+    if name != "1":
+        file_name = exec_start(name, int(count))
+        return JSONResponse(content={"content": file_name})
+    else:
+        global file_name_use
+        file_name = get_content_value(file_name_use)
+        reutrn_content = exec_start(file_name, 0)
+        return JSONResponse(content={"content": reutrn_content})
+
+@app.post("/api/ppt_first_template")
+def convert_ppt_first_template():
+    image_list = []
+    for root, dirs, files in os.walk("first_pages"):
+        for file in files:
+            print(file)
+            image_list.append(f"http://{SERVER_IP}/static/first_pages/{os.path.basename(file)}")
+    return JSONResponse(content={"images": image_list})
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+        with open(f"uploaded_{file.filename}", "wb") as f:
+            f.write(contents)
+        global file_name_use
+        file_name_use = f"uploaded_{file.filename}"
+        return JSONResponse(content={"filename": file.filename, "status": "success"})
+
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)
+
+
+@app.post("/api/ppt_final_content")
+def convert_ppt_first_template(data: RequestData):
+    res = MarkdownToJsonConverter().generate_final_content(data.content)
+    ppt_run(os.path.abspath("./模板2/" + data.file.split("/")[-1]), res)
+    image_list = convert_ppt_to_images()
+    return JSONResponse(content={"images": image_list})
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+        with open(f"uploaded_{file.filename}", "wb") as f:
+            f.write(contents)
+        global file_name_use
+        file_name_use = f"uploaded_{file.filename}"
+        return JSONResponse(content={"filename": file.filename, "status": "success"})
+
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)

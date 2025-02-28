@@ -28,6 +28,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+pptHandler = APIRouter(prefix="/ppt")
 
 
 class RequestData(BaseModel):
@@ -37,9 +38,6 @@ class RequestData(BaseModel):
 app.mount("/static", StaticFiles(directory="./"), name="static")
 
 file_name_use = ""
-pptHandler = APIRouter(prefix="/ppt")
-app.include_router(pptHandler)
-
 
 # 根据上传文件，返回md文件
 @pptHandler.post("/api/upload")
@@ -68,8 +66,9 @@ async def generate_ppt_task(
 ):
     return generate_ppt_impl(md, ppt_path)
 
-
-@app.get("/api/get_content")
+# ==========================================================
+# 获取文稿内容
+@pptHandler.get("/api/get_content")
 def get_content(name:str, count:str):
     if name != "1":
         file_name = exec_start(name, int(count))
@@ -80,7 +79,9 @@ def get_content(name:str, count:str):
         reutrn_content = exec_start(file_name, 0)
         return JSONResponse(content={"content": reutrn_content})
 
-@app.post("/api/ppt_first_template")
+
+# 获取模板展示
+@pptHandler.post("/api/ppt_first_template")
 def convert_ppt_first_template():
     image_list = []
     for root, dirs, files in os.walk("first_pages"):
@@ -89,28 +90,16 @@ def convert_ppt_first_template():
             image_list.append(f"http://{SERVER_IP}/static/first_pages/{os.path.basename(file)}")
     return JSONResponse(content={"images": image_list})
 
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    try:
-        contents = await file.read()
-        with open(f"uploaded_{file.filename}", "wb") as f:
-            f.write(contents)
-        global file_name_use
-        file_name_use = f"uploaded_{file.filename}"
-        return JSONResponse(content={"filename": file.filename, "status": "success"})
-
-    except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=400)
-
-
-@app.post("/api/ppt_final_content")
+# 生成ppt最终内容图片
+@pptHandler.post("/api/ppt_final_content")
 def convert_ppt_first_template(data: RequestData):
     res = MarkdownToJsonConverter().generate_final_content(data.content)
     ppt_run(os.path.abspath("./模板2/" + data.file.split("/")[-1]), res)
     image_list = convert_ppt_to_images()
     return JSONResponse(content={"images": image_list})
 
-@app.post("/upload")
+# 上传
+@pptHandler.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     try:
         contents = await file.read()
@@ -122,3 +111,5 @@ async def upload_file(file: UploadFile = File(...)):
 
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)
+    
+app.include_router(pptHandler)

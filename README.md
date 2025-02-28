@@ -10,6 +10,7 @@
 - ppt_llm.py 生成markdown以及json转换
 - ppt_templates ppt模板存放位置
 - runs 上传文档、生成PPT的目录
+- ui 前端
 - main.py 主函数
 
 ## 配置说明

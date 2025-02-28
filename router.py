@@ -93,10 +93,13 @@ def convert_ppt_first_template():
 # 生成ppt最终内容图片
 @pptHandler.post("/api/ppt_final_content")
 def convert_ppt_first_template(data: RequestData):
-    res = MarkdownToJsonConverter().generate_final_content(data.content)
-    ppt_run(os.path.abspath("./模板2/" + data.file.split("/")[-1]), res)
-    image_list = convert_ppt_to_images()
-    return JSONResponse(content={"images": image_list})
+    try:
+        res = MarkdownToJsonConverter().generate_final_content(data.content)
+        ppt_run(os.path.abspath("./模板2/" + data.file.split("/")[-1]), res)
+        image_list = convert_ppt_to_images()
+        return JSONResponse(content={"images": image_list})
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)
 
 # 上传
 @pptHandler.post("/upload")

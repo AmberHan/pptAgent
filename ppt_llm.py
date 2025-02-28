@@ -88,9 +88,9 @@ def generate_ppt_impl(
 
 
 
-if __name__ == '__main__':
-    prompt = gen_ppt_md("人工智能")
-    md = ask_query(prompt, "关于大模型")
-    # from test_data import markdown_content
-    # md = markdown_content
-    generate_ppt_impl(md, "./ppt_templates/test.pptx")
+# if __name__ == '__main__':
+#     prompt = gen_ppt_md("人工智能")
+#     md = ask_query(prompt, "关于大模型")
+#     # from test_data import markdown_content
+#     # md = markdown_content
+#     generate_ppt_impl(md, "./ppt_templates/test.pptx")

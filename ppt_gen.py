@@ -402,10 +402,10 @@ def test():
     ppt.save('./final.pptx')
 
 
-if __name__ == '__main__':
-    # test()
+# if __name__ == '__main__':
+#     # test()
 
-    ppt_file = select_random_ppt("./ppt_templates")
-    # ppt_file = "./ppt_templates/1816068952535851008.pptx"
+#     ppt_file = select_random_ppt("./ppt_templates")
+#     # ppt_file = "./ppt_templates/1816068952535851008.pptx"
 
-    generate(ppt_file, ppt_json)
+#     generate(ppt_file, ppt_json)

@@ -1,9 +1,13 @@
 from langchain_community.chat_models import MoonshotChat
 from docx import Document as DocxDocument
 import PyPDF2
-import dotenv
 import os
+import sys
+from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 
+sys.path.append("../")
+import config
 
 
 
@@ -53,11 +57,24 @@ def parse_content_with_model(text, llm):
 
 # 5. 主函数
 def get_content_value(path: str):
-    dotenv.load_dotenv()
-    llm = MoonshotChat(model="moonshot-v1-8k", api_key=os.getenv("MOONSHOT_API_KEY"))
+    if config.LOCAL:
+        llm = ChatOllama(
+            model=config.MODEL,  # "Qwen2.5-72B-Instruct",
+            temperature=0.7,
+            base_url=config.BASEURL  # "http://127.0.0.1:11434",
+        )
+    else:
+        llm = ChatOpenAI(
+            model=config.MODEL,
+            temperature=0.7,
+            api_key=config.APIKEY,
+            base_url=config.BASEURL
+        )
+
     file_path = path
     text = load_file_content(file_path)
     result = parse_content_with_model(text, llm)
     print("解析结果：")
     md = result.replace("```", "").replace("markdown", "")
+    print(md)
     return md

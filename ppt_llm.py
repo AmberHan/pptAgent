@@ -39,7 +39,17 @@ def ask_query(prompt, style):
     ]
     response = llm.invoke(messages)
     data = response.content
-    print(data)
+    if "</think>" in data:
+        data = data.split("</think>")[1].lstrip()
+        print(data)
+    if "```markdown" in data:
+        data = data.replace("```markdown", "")
+    if data.startswith("```json"):
+        data = data[7:]
+    if data.startswith("```"):
+        data = data[3:]
+    if data.endswith("```"):
+        data = data[:-3]
     return data
 
 
@@ -74,6 +84,8 @@ def generate_ppt_impl(
     prompt = gen_md_json()
     json_content = ask_query(prompt, md)
     generate(ppt_path, json5.loads(json_content))
+
+
 
 
 if __name__ == '__main__':

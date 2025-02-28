@@ -313,13 +313,17 @@ def update_slide(ppt, order_list, slides_dic, slides_items):
     contents_items = slides_items["contents"]
     for i, pair in enumerate(group_c):
         shape_title, shape_contents = pair[0], pair[1]
-        replace_text_with_style(shape_title, contents_items[i]["title"])
-        last_contents = contents_items[i]["contents"]
-        # if len(last_contents) == 1:
-        #     replace_text_with_style(shape_contents, last_contents[0])
-        # else:
-        #     replace_text_list_with_style(shape_contents, last_contents)
-        replace_text_with_style(shape_contents, "\n".join(last_contents))
+        try:
+            replace_text_with_style(shape_title, contents_items[i]["title"])
+            last_contents = contents_items[i]["contents"]
+    
+            # if len(last_contents) == 1:
+            #     replace_text_with_style(shape_contents, last_contents[0])
+            # else:
+            #     replace_text_list_with_style(shape_contents, last_contents)
+            replace_text_with_style(shape_contents, "\n".join(last_contents))
+        except:
+            pass
     append_shapes(ppt, slide, order_list)
 
 
@@ -386,7 +390,7 @@ def generate(ppt_file, md_json):
 
     order_list.append(slides_count - 1)
     resort_slide(ppt, order_list)
-    ppt.save('./runs/final.pptx')
+    ppt.save('./final.pptx')
 
 
 def test():

@@ -7,16 +7,15 @@ from fastapi import (
 )
 
 from config import SERVER_IP
-from ppt_llm import parse_pdf_impl, parse_topic_impl, generate_ppt_impl
+from ppt_llm import parse_pdf_impl, parse_topic_impl, generate_ppt_impl, ask_query
 from fastapi.staticfiles import StaticFiles
 import os
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+
+from prompts import gen_ppt_md
 from transfer_ppt.generate_content_from import get_content_value
-from transfer_ppt.generate_ppt import exec_start
-from transfer_ppt.llm2 import MarkdownToJsonConverter
-from transfer_ppt.ppt import ppt_run
 from utils.generate_images import convert_ppt_to_images
 
 
@@ -70,14 +69,20 @@ async def generate_ppt_task(
 # 获取文稿内容
 @pptHandler.get("/api/get_content")
 def get_content(name:str, count:str):
-    if name != "1":
-        file_name = exec_start(name, int(count))
-        return JSONResponse(content={"content": file_name})
-    else:
+    try:
+        if name != "1":
+            prompt = gen_ppt_md(name)
+            md = ask_query(prompt, "")
+            return JSONResponse(content={"content": md})
         global file_name_use
         file_name = get_content_value(file_name_use)
-        reutrn_content = exec_start(file_name, 0)
-        return JSONResponse(content={"content": reutrn_content})
+        reutrn_content = gen_ppt_md(file_name)
+        md = ask_query(reutrn_content, "")
+        return JSONResponse(content={"content": md})
+
+    except Exception as e:
+        # 捕获异常并返回错误信息
+        raise JSONResponse(content={"error": str(e)}, status_code=400)
 
 
 # 获取模板展示
@@ -93,13 +98,12 @@ def convert_ppt_first_template():
 # 生成ppt最终内容图片
 @pptHandler.post("/api/ppt_final_content")
 def convert_ppt_first_template(data: RequestData):
-    try:
-        res = MarkdownToJsonConverter().generate_final_content(data.content)
-        ppt_run(os.path.abspath("./模板2/" + data.file.split("/")[-1]), res)
-        image_list = convert_ppt_to_images()
-        return JSONResponse(content={"images": image_list})
-    except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=400)
+    # try:
+    generate_ppt_impl(data.content, os.path.abspath("./模板2/" + data.file.split("/")[-1]))
+    image_list = convert_ppt_to_images()
+    return JSONResponse(content={"images": image_list})
+    # except Exception as e:
+    #     return JSONResponse(content={"error": str(e)}, status_code=400)
 
 # 上传
 @pptHandler.post("/upload")

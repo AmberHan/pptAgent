@@ -18,14 +18,14 @@ if config.LOCAL:
     llm = ChatOllama(
         model=config.MODEL,  # "Qwen2.5-72B-Instruct",
         temperature=0.7,
-        base_url=config.BASEURL  # "http://127.0.0.1:11434",
+        base_url=config.BASE_URL  # "http://127.0.0.1:11434",
     )
 else:
     llm = ChatOpenAI(
         model=config.MODEL,
         temperature=0.7,
-        api_key=config.APIKEY,
-        base_url=config.BASEURL
+        api_key=config.API_KEY,
+        base_url=config.BASE_URL
     )
 
 
@@ -84,9 +84,6 @@ def generate_ppt_impl(
     prompt = gen_md_json()
     json_content = ask_query(prompt, md)
     generate(ppt_path, json5.loads(json_content))
-
-
-
 
 # if __name__ == '__main__':
 #     prompt = gen_ppt_md("人工智能")

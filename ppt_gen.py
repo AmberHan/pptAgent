@@ -6,8 +6,6 @@ from pptx import Presentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.enum.text import PP_ALIGN
 
-from test_data import ppt_json
-
 
 def load_presentation(ppt_path):
     return Presentation(ppt_path)
@@ -316,7 +314,7 @@ def update_slide(ppt, order_list, slides_dic, slides_items):
         try:
             replace_text_with_style(shape_title, contents_items[i]["title"])
             last_contents = contents_items[i]["contents"]
-    
+
             # if len(last_contents) == 1:
             #     replace_text_with_style(shape_contents, last_contents[0])
             # else:
@@ -400,7 +398,6 @@ def test():
     replace_text_with_style(title, f"页面标题{page}")
     update_presentation(group_c, [(f"标题{i}", f"内容{i}" * 10) for i in range(len(group_c))])
     ppt.save('./final.pptx')
-
 
 # if __name__ == '__main__':
 #     # test()

@@ -60,8 +60,6 @@ def gen_ppt_md(schema):
     return prompt
 
 
-
-
 def gen_md_json():
     prompt = """
     你是一名专业的Markdown解析与JSON转换专家，任务是将给定的Markdown内容精准转换为特定的JSON格式。

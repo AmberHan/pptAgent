@@ -1,14 +1,12 @@
-from langchain_community.chat_models import MoonshotChat
-from docx import Document as DocxDocument
-import PyPDF2
-import os
 import sys
+
+import PyPDF2
+from docx import Document as DocxDocument
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 
 sys.path.append("../")
 import config
-
 
 
 # 3. 加载文件内容
@@ -33,6 +31,7 @@ def load_file_content(file_path):
     else:
         raise ValueError("不支持的文件格式")
 
+
 # 4. 使用模型解析内容
 def parse_content_with_model(text, llm):
     """
@@ -55,20 +54,21 @@ def parse_content_with_model(text, llm):
     response = llm.predict(prompt)
     return response
 
+
 # 5. 主函数
 def get_content_value(path: str):
     if config.LOCAL:
         llm = ChatOllama(
             model=config.MODEL,  # "Qwen2.5-72B-Instruct",
             temperature=0.7,
-            base_url=config.BASEURL  # "http://127.0.0.1:11434",
+            base_url=config.BASE_URL  # "http://127.0.0.1:11434",
         )
     else:
         llm = ChatOpenAI(
             model=config.MODEL,
             temperature=0.7,
-            api_key=config.APIKEY,
-            base_url=config.BASEURL
+            api_key=config.API_KEY,
+            base_url=config.BASE_URL
         )
 
     file_path = path

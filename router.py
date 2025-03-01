@@ -1,3 +1,5 @@
+import os
+
 from fastapi import (
     FastAPI,
     File,
@@ -5,19 +7,16 @@ from fastapi import (
     UploadFile,
     APIRouter
 )
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 from config import SERVER_IP
 from ppt_llm import parse_pdf_impl, parse_topic_impl, generate_ppt_impl, ask_query
-from fastapi.staticfiles import StaticFiles
-import os
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
-
 from prompts import gen_ppt_md
 from transfer_ppt.generate_content_from import get_content_value
 from utils.generate_images import convert_ppt_to_images
-
 
 app = FastAPI()
 app.add_middleware(
@@ -34,9 +33,11 @@ class RequestData(BaseModel):
     file: str
     content: str
 
+
 app.mount("/static", StaticFiles(directory="./"), name="static")
 
 file_name_use = ""
+
 
 # 根据上传文件，返回md文件
 @pptHandler.post("/api/upload")
@@ -65,10 +66,11 @@ async def generate_ppt_task(
 ):
     return generate_ppt_impl(md, ppt_path)
 
+
 # ==========================================================
 # 获取文稿内容
 @pptHandler.get("/api/get_content")
-def get_content(name:str, count:str):
+def get_content(name: str, count: str):
     try:
         if name != "1":
             prompt = gen_ppt_md(name)
@@ -95,6 +97,7 @@ def convert_ppt_first_template():
             image_list.append(f"http://{SERVER_IP}/static/first_pages/{os.path.basename(file)}")
     return JSONResponse(content={"images": image_list})
 
+
 # 生成ppt最终内容图片
 @pptHandler.post("/api/ppt_final_content")
 def convert_ppt_first_template(data: RequestData):
@@ -104,6 +107,7 @@ def convert_ppt_first_template(data: RequestData):
     return JSONResponse(content={"images": image_list})
     # except Exception as e:
     #     return JSONResponse(content={"error": str(e)}, status_code=400)
+
 
 # 上传
 @pptHandler.post("/upload")
@@ -118,5 +122,6 @@ async def upload_file(file: UploadFile = File(...)):
 
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)
-    
+
+
 app.include_router(pptHandler)

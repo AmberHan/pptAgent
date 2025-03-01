@@ -2,9 +2,7 @@ import os
 import subprocess
 
 
-
-
-def generate_png(ppt_path:str, output_dir: str):
+def generate_png(ppt_path: str, output_dir: str):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     try:
@@ -26,5 +24,6 @@ def list_files_in_directory(directory):
         for file in files:
             generate_png(os.path.abspath(os.path.join(root, file)), "../first_pages")
             # print(os.path.abspath(os.path.join(root, file)))
+
 
 list_files_in_directory("../模板2")

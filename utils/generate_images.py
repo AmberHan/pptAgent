@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 from datetime import datetime
+
 import pdfplumber
 
 from config import SERVER_IP
@@ -45,5 +46,3 @@ def convert_ppt_to_images():
         pass
 
     return image_list
-
-
